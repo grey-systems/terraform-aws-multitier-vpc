@@ -1,4 +1,4 @@
-# terraform-multitier-vpcB
+# terraform-multitier-vpc
 
 This repo contains a [Terraform](https://terraform.io/) module for
 provisioning an [AWS Multitier VPC](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Scenario3.html), with the following topology:
