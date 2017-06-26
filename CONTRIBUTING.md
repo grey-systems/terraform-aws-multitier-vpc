@@ -1,7 +1,7 @@
 Contributing to terraform-elasticsearch
 =======================
 
-The easiest ways to contribute to `terraform-elasticsearch` are:
+The easiest ways to contribute to `terraform-multitier-vpc` are:
 
 
   * Creating a new [issue].
