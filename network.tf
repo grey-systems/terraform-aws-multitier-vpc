@@ -1,9 +1,3 @@
-provider "aws" {
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
-  region     = "${var.region}"
-}
-
 resource "aws_vpc" "pro" {
   cidr_block           = "${var.cidr_block}"
   enable_dns_support   = true
@@ -17,9 +11,9 @@ resource "aws_vpc" "pro" {
 
 resource "aws_subnet" "pm_pro_public" {
   vpc_id                  = "${aws_vpc.pro.id}"
-  count                   = "${length(split(",",var.public_cidr_blocks))}"
-  availability_zone       = "${element(split(",", var.availability_zones),count.index)}"
-  cidr_block              = "${element(split(",",var.public_cidr_blocks),count.index)}"
+  count                   = "${length(var.public_cidr_blocks)}"
+  availability_zone       = "${element(var.availability_zones,count.index)}"
+  cidr_block              = "${element(var.public_cidr_blocks,count.index)}"
   map_public_ip_on_launch = true
 
   tags {
@@ -30,9 +24,9 @@ resource "aws_subnet" "pm_pro_public" {
 
 resource "aws_subnet" "pm_pro_private" {
   vpc_id            = "${aws_vpc.pro.id}"
-  count             = "${length(split(",",var.private_cidr_blocks))}"
-  availability_zone = "${element(split(",", var.availability_zones),count.index)}"
-  cidr_block        = "${element(split(",",var.private_cidr_blocks),count.index)}"
+  count             = "${length(var.private_cidr_blocks)}"
+  availability_zone = "${element(var.availability_zones,count.index)}"
+  cidr_block        = "${element(var.private_cidr_blocks,count.index)}"
 
   tags {
     Name = "${var.environment}-private-subnet-${count.index}"
@@ -41,7 +35,7 @@ resource "aws_subnet" "pm_pro_private" {
 }
 
 resource "aws_eip" "nat_ip" {
-  count = "${length(split(",",var.public_cidr_blocks))}"
+  count = "${length(var.public_cidr_blocks)}"
   vpc   = true
 }
 
@@ -97,14 +91,14 @@ resource "aws_vpn_connection_route" "static_routes" {
 
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = "${element(aws_eip.nat_ip.*.id,count.index)}"
-  count         = "${length(split(",",var.public_cidr_blocks))}"
+  count         = "${length(var.public_cidr_blocks)}"
   subnet_id     = "${element(aws_subnet.pm_pro_public.*.id,count.index)}"
   depends_on    = ["aws_internet_gateway.internet_gw"]
 }
 
 resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.pro.id}"
-  count  = "${length(split(",",var.private_cidr_blocks))}"
+  count  = "${length(var.private_cidr_blocks)}"
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -136,13 +130,13 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  count          = "${length(split(",",var.public_cidr_blocks))}"
+  count          = "${length(var.public_cidr_blocks)}"
   subnet_id      = "${element(aws_subnet.pm_pro_public.*.id,count.index)}"
   route_table_id = "${aws_route_table.public.id}"
 }
 
 resource "aws_route_table_association" "private" {
-  count          = "${length(split(",",var.private_cidr_blocks))}"
+  count          = "${length(var.private_cidr_blocks)}"
   subnet_id      = "${element(aws_subnet.pm_pro_private.*.id,count.index)}"
   route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
 }
