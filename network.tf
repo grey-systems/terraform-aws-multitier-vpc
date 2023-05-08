@@ -3,7 +3,7 @@ resource "aws_vpc" "pro" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags {
+  tags = {
     Name = "${var.environment}-vpc"
     Env  = "${var.environment}"
   }
@@ -16,7 +16,7 @@ resource "aws_subnet" "pm_pro_public" {
   cidr_block              = "${element(var.public_cidr_blocks,count.index)}"
   map_public_ip_on_launch = true
 
-  tags {
+  tags = {
     Name = "${var.environment}-public-subnet-${count.index}"
     Env  = "${var.environment}"
   }
@@ -28,7 +28,7 @@ resource "aws_subnet" "pm_pro_private" {
   availability_zone = "${element(var.availability_zones,count.index)}"
   cidr_block        = "${element(var.private_cidr_blocks,count.index)}"
 
-  tags {
+  tags = {
     Name = "${var.environment}-private-subnet-${count.index}"
     Env  = "${var.environment}"
   }
@@ -42,7 +42,7 @@ resource "aws_eip" "nat_ip" {
 resource "aws_internet_gateway" "internet_gw" {
   vpc_id = "${aws_vpc.pro.id}"
 
-  tags {
+  tags = {
     Name = "${var.environment}-internet-gw"
     Env  = "${var.environment}"
   }
@@ -54,7 +54,7 @@ resource "aws_customer_gateway" "customer_gateway" {
   ip_address = "${var.customer_gateway_ip}"
   type       = "ipsec.1"
 
-  tags {
+  tags = {
     Name = "${var.customer_gateway_name}-${var.environment}"
     Env  = "${var.environment}"
   }
@@ -63,7 +63,7 @@ resource "aws_customer_gateway" "customer_gateway" {
 resource "aws_vpn_gateway" "vpn_gw" {
   vpc_id = "${aws_vpc.pro.id}"
 
-  tags {
+  tags = {
     Name = "${var.customer_gateway_name}-${var.environment}-vpn-gw"
     Env  = "${var.environment}"
   }
@@ -75,7 +75,7 @@ resource "aws_vpn_connection" "main" {
   type                = "ipsec.1"
   static_routes_only  = true
 
-  tags {
+  tags = {
     Name = "${var.customer_gateway_name}-${var.environment}"
     Env  = "${var.environment}"
   }
@@ -107,7 +107,7 @@ resource "aws_route_table" "private" {
 
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw.id}"]
 
-  tags {
+  tags = {
     Name = "${var.environment}-private-route-table-${count.index}"
     Env  = "${var.environment}"
   }
@@ -123,7 +123,7 @@ resource "aws_route_table" "public" {
 
   propagating_vgws = ["${aws_vpn_gateway.vpn_gw.id}"]
 
-  tags {
+  tags = {
     Name = "${var.environment}-public-route-table"
     Env  = "${var.environment}"
   }
