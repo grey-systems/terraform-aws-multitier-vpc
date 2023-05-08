@@ -93,7 +93,7 @@ resource "aws_nat_gateway" "nat_gw" {
   allocation_id = "${element(aws_eip.nat_ip.*.id,count.index)}"
   count         = "${length(var.public_cidr_blocks)}"
   subnet_id     = "${element(aws_subnet.pm_pro_public.*.id,count.index)}"
-  depends_on    = ["aws_internet_gateway.internet_gw"]
+  depends_on    = [aws_internet_gateway.internet_gw]
 }
 
 resource "aws_route_table" "private" {
