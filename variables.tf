@@ -2,14 +2,14 @@
 * List of AZ to spare the different subnets
 */
 variable "availability_zones" {
-  type = "list"
+  type = list
 }
 
 /**
 * VPC Main CIDR block
 */
 variable "cidr_block" {
-  type = "string"
+  type = string
 }
 
 /**
@@ -17,7 +17,7 @@ variable "cidr_block" {
 * for every cidr_block
 */
 variable "public_cidr_blocks" {
-  type = "list"
+  type = list
 }
 
 /**
@@ -25,7 +25,7 @@ variable "public_cidr_blocks" {
 * for every cidr_block
 */
 variable "private_cidr_blocks" {
-  type = "list"
+  type = list
 }
 
 /**
@@ -33,7 +33,7 @@ variable "private_cidr_blocks" {
 * identification in AWS console
 */
 variable "environment" {
-  type = "string"
+  type = string
 }
 
 /**
@@ -41,27 +41,27 @@ variable "environment" {
 * identification in AWS console
 */
 variable "short_identifier" {
-  type = "string"
+  type = string
 }
 
 /**
 * The IP of the counterpart of the VPN connection.
 */
 variable "customer_gateway_ip" {
-  type = "string"
+  type = string
 }
 
 /**
 * Name for customer gateway
 */
 variable "customer_gateway_name" {
-  type = "string"
+  type = string
 }
 
 /**
 * List of cidr blocks to be configured as static routes in the AWS VPN
 */
 variable "subnets_vpn" {
-  type    = "string"
+  type    = string
   default = ""
 }
